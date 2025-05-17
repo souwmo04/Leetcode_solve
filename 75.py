@@ -14,6 +14,6 @@ class Solution:
             elif nums[i] == 2:
                 swap(i, r)
                 r -= 1
-                # don't increment i here
+                # don't increment i here 
             else:
                 i += 1
