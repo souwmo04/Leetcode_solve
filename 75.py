@@ -16,4 +16,4 @@ class Solution:
                 r -= 1
                 # don't increment i here 
             else:
-                i += 1
+                i += 1 
