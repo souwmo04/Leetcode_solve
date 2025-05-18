@@ -23,6 +23,6 @@ class Solution:
             for i in range(k):
                 for j in compatible[i]:
                     new_dp[i] = (new_dp[i] + dp[j]) % MOD
-            dp = new_dp
+            dp = new_dp 
 
-        return sum(dp) % MOD
+        return sum(dp) % MOD  
