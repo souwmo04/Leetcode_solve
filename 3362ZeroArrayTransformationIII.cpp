@@ -1,44 +1,43 @@
-from typing import List
 
-class Solution:
-    def maxRemoval(self, nums: List[int], queries: List[List[int]]) -> int:
-        n = len(nums)
-        m = len(queries)
+class Solution {
+public:
+    int maxRemoval(vector<int>& nums, vector<vector<int>>& queries) {
+        int n = nums.size();
+        int q = queries.size();
 
-        # Binary search on how many queries to keep (we'll subtract from total to get max removable)
-        def can_convert(keep_queries: List[List[int]]) -> bool:
-            diff = [0] * (n + 1)
-            for l, r in keep_queries:
-                diff[l] += 1
-                if r + 1 < n:
-                    diff[r + 1] -= 1
+        // Sort the queries based on starting index
+        sort(queries.begin(), queries.end());
 
-            coverage = [0] * n
-            coverage[0] = diff[0]
-            for i in range(1, n):
-                coverage[i] = coverage[i - 1] + diff[i]
+        // Max-heap for available queries (based on end index)
+        priority_queue<int> available;
 
-            for i in range(n):
-                if coverage[i] < nums[i]:
-                    return False
-            return True
+        // Min-heap for running/used queries (based on end index)
+        priority_queue<int, vector<int>, greater<int>> running;
 
-        # Binary search: find the **minimum number of queries** needed
-        low, high = 0, m
-        min_needed = -1
+        int j = 0;
 
-        while low <= high:
-            mid = (low + high) // 2
-            from itertools import combinations
-            # Try all subsets of size mid is too expensive. Instead, just take first mid queries
-            # in practice, shuffle the list or sort based on range length or some heuristic
-            keep = queries[:mid]
-            if can_convert(keep):
-                min_needed = mid
-                high = mid - 1
-            else:
-                low = mid + 1
+        for (int i = 0; i < n; ++i) {
+            // Add all queries that start at or before index i
+            while (j < q && queries[j][0] <= i) {
+                available.push(queries[j][1]);
+                ++j;
+            }
 
-        if min_needed == -1:
-            return -1
-        return m - min_needed
+            // Remove expired queries from running heap
+            while (!running.empty() && running.top() < i) {
+                running.pop();
+            }
+
+            // We need at least nums[i] valid queries covering index i
+            while ((int)running.size() < nums[i]) {
+                if (available.empty()) return -1;
+                int end = available.top(); available.pop();
+                if (end < i) return -1; // This query cannot cover index i
+                running.push(end);
+            }
+        }
+
+        // All unused queries in `available` can be removed
+        return (int)available.size();
+    }
+};
