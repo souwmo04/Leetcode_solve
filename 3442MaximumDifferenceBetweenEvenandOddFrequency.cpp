@@ -23,6 +23,6 @@ public:
             }
         }
       
-        
+       return maxOddCount - minEvenCount;  // Return the difference between max odd count and min even count
     }
 };
